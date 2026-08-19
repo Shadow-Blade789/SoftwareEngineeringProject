@@ -357,21 +357,155 @@
             {% endif %}
             {% if schedule.alerts %}
 
-<section class="card">
-
-    <h2>
-        ⚠️ Teams Requiring Attention
-    </h2>
-
-    <p class="note">
-        These teams have less than
-        20 minutes between runs.
-    </p>
-
-
-    <div class="alerts">
-
-
+            <section class="card">
+            
+                <div class="section-header">
+            
+                    <div>
+            
+                        <h2>
+                            ⚠️ Teams Requiring Attention
+                        </h2>
+            
+                        <p class="note">
+                            {{ schedule.alerts|length }}
+                            team{% if schedule.alerts|length != 1 %}s{% endif %}
+                            have breaks under 20 minutes.
+                        </p>
+            
+                    </div>
+            
+                </div>
+            
+            
+                <div class="alerts">
+            
+                    {% for alert in schedule.alerts[:5] %}
+            
+                    <div class="alert {{ alert.severity }}">
+            
+                        <div class="alert-header">
+            
+                            <div>
+            
+                                <strong>
+                                    {{ alert.team }}
+                                </strong>
+            
+                                <span>
+                                    {{ alert.team_name }}
+                                </span>
+            
+                            </div>
+            
+                            <strong class="break-time">
+            
+                                {{ alert.break_minutes }} min
+            
+                            </strong>
+            
+                        </div>
+            
+            
+                        <div class="alert-details">
+            
+                            <span>
+                                {{ alert.issue }}
+                            </span>
+            
+                            <span>
+                                Run {{ alert.first_run }}
+                                ·
+                                {{ alert.first_time }}
+                            </span>
+            
+                            <span>
+                                Run {{ alert.second_run }}
+                                ·
+                                {{ alert.second_time }}
+                            </span>
+            
+                        </div>
+            
+                    </div>
+            
+                    {% endfor %}
+            
+                </div>
+            
+            
+                {% if schedule.alerts|length > 5 %}
+            
+                <details class="alert-dropdown">
+            
+                    <summary>
+                        Show
+                        {{ schedule.alerts|length - 5 }}
+                        more alert{% if schedule.alerts|length - 5 != 1 %}s{% endif %}
+                    </summary>
+            
+            
+                    <div class="alerts">
+            
+                        {% for alert in schedule.alerts[5:] %}
+            
+                        <div class="alert {{ alert.severity }}">
+            
+                            <div class="alert-header">
+            
+                                <div>
+            
+                                    <strong>
+                                        {{ alert.team }}
+                                    </strong>
+            
+                                    <span>
+                                        {{ alert.team_name }}
+                                    </span>
+            
+                                </div>
+            
+            
+                                <strong class="break-time">
+            
+                                    {{ alert.break_minutes }} min
+            
+                                </strong>
+            
+                            </div>
+            
+            
+                            <div class="alert-details">
+            
+                                <span>
+                                    {{ alert.issue }}
+                                </span>
+            
+                                <span>
+                                    Run {{ alert.first_run }}
+                                    ·
+                                    {{ alert.first_time }}
+                                </span>
+            
+                                <span>
+                                    Run {{ alert.second_run }}
+                                    ·
+                                    {{ alert.second_time }}
+                                </span>
+            
+                            </div>
+            
+                        </div>
+            
+                        {% endfor %}
+            
+                    </div>
+            
+                </details>
+            
+                {% endif %}
+            
+            </section>
         {% for alert in schedule.alerts %}
 
         <div class="alert {{ alert.severity }}">
