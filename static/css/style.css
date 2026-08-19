@@ -406,3 +406,58 @@ pre {
 .quality-message p {
     margin: 6px 0;
 }
+
+.alerts {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.alert {
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+}
+
+.alert-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.alert-header strong {
+    display: block;
+}
+
+.alert-header span {
+    display: block;
+    margin-top: 4px;
+    font-size: 0.9rem;
+}
+
+.break-time {
+    font-size: 1.2rem;
+}
+
+.alert-details {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-top: 12px;
+    font-size: 0.9rem;
+}
+
+.alert.short {
+    background: #fff7df;
+    border-color: #efd27b;
+}
+
+.alert.very-short {
+    background: #fff0d6;
+    border-color: #e5ad57;
+}
+
+.alert.critical {
+    background: #fdecec;
+    border-color: #e5aaaa;
+}

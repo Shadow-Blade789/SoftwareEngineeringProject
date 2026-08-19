@@ -190,7 +190,6 @@ def generate_candidate(
             )
         ]
 
-        # Randomise before scoring.
         random_generator.shuffle(
             available_teams
         )
@@ -669,6 +668,14 @@ def generate_schedule(
         start_time
     )
 
+    best_schedule["alerts"] = (
+    get_schedule_alerts(
+        best_schedule["assignments"],
+        teams,
+        start_time
+    )
+)
+
     best_schedule["quality"] = (
         best_report["quality"]
     )
@@ -733,3 +740,81 @@ def generate_schedule(
     )
 
     return best_schedule
+
+def get_schedule_alerts(
+    assignments,
+    teams,
+    start_time
+):
+    team_lookup = {
+        team["number"]: team
+        for team in teams
+    }
+
+    alerts = []
+
+    for team, runs in assignments.items():
+
+        for first, second in zip(
+            runs,
+            runs[1:]
+        ):
+
+            break_minutes = (
+                calculate_break_minutes(
+                    first,
+                    second
+                )
+            )
+
+            if break_minutes >= SHORT_BREAK:
+                continue
+
+            first_time = calculate_time(
+                first,
+                start_time
+            )
+
+            second_time = calculate_time(
+                second,
+                start_time
+            )
+
+            if break_minutes < 6:
+                severity = "critical"
+
+            elif break_minutes < VERY_SHORT_BREAK:
+                severity = "very-short"
+
+            else:
+                severity = "short"
+
+            if break_minutes < 6:
+                issue = "Consecutive runs"
+
+            elif break_minutes < VERY_SHORT_BREAK:
+                issue = "Very short break"
+
+            else:
+                issue = "Short break"
+
+            alerts.append({
+                "team": team,
+                "team_name": team_lookup[
+                    team
+                ]["name"],
+                "issue": issue,
+                "severity": severity,
+                "first_run": first + 1,
+                "second_run": second + 1,
+                "first_time": first_time,
+                "second_time": second_time,
+                "break_minutes": break_minutes
+            })
+
+    alerts.sort(
+        key=lambda alert:
+        alert["break_minutes"]
+    )
+
+    return alerts
