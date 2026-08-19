@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Robotics Schedule</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+</head>
+
+<body>
+
+    <main class="container wide">
+
+        <section class="card">
+
+            <div class="top-row">
+
+                <div>
+
+                    <h1>
+                        Robotics Run Schedule
+                    </h1>
+
+                    <p>
+                        {{ teams|length }} teams
+                        ·
+                        {{ tables }} tables
+                        ·
+                        3 runs per team
+                    </p>
+
+                </div>
+
+
+                <a
+                    href="{{ url_for('index') }}"
+                    class="secondary-button"
+                >
+                    New Schedule
+                </a>
+
+            </div>
+
+        </section>
+
+
+        <section class="stats">
+
+            <div class="stat card">
+
+                <span>
+                    Teams
+                </span>
+
+                <strong>
+                    {{ teams|length }}
+                </strong>
+
+            </div>
+
+
+            <div class="stat card">
+
+                <span>
+                    Total Runs
+                </span>
+
+                <strong>
+                    {{ schedule.total_runs }}
+                </strong>
+
+            </div>
+
+
+            <div class="stat card">
+
+                <span>
+                    Time Slots
+                </span>
+
+                <strong>
+                    {{ schedule.total_slots }}
+                </strong>
+
+            </div>
+
+
+            <div class="stat card">
+
+                <span>
+                    Schedule Length
+                </span>
+
+                <strong>
+                    {{ schedule.slot_duration }}
+                    min
+                </strong>
+
+            </div>
+
+        </section>
+
+
+        <section class="card">
+
+            <h2>
+                Schedule
+            </h2>
+
+            <div class="schedule-wrapper">
+
+                <table class="schedule">
+
+                    <thead>
+
+                        <tr>
+
+                            <th>
+                                Time
+                            </th>
+
+                            {% for table in range(1, tables + 1) %}
+
+                                <th>
+                                    Table {{ table }}
+                                </th>
+
+                            {% endfor %}
+
+                        </tr>
+
+                    </thead>
+
+
+                    <tbody>
+
+                        {% for slot in schedule.slots %}
+
+                            <tr>
+
+                                <td class="time-cell">
+
+                                    <strong>
+                                        {{ slot[0].time }}
+                                    </strong>
+
+                                </td>
+
+
+                                {% for cell in slot %}
+
+                                    <td>
+
+                                        {% if cell.team %}
+
+                                            <div class="team-card">
+
+                                                <strong>
+                                                    {{ cell.team }}
+                                                </strong>
+
+                                                <span>
+                                                    {{ cell.team_name }}
+                                                </span>
+
+                                                <small>
+                                                    Run {{ cell.run }}
+                                                </small>
+
+                                            </div>
+
+                                        {% else %}
+
+                                            <span class="empty">
+                                                —
+                                            </span>
+
+                                        {% endif %}
+
+                                    </td>
+
+                                {% endfor %}
+
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </section>
+
+
+        <section class="card">
+
+            <h2>
+                Schedule Information
+            </h2>
+
+
+            <div class="info-grid">
+
+                <div>
+
+                    <span>
+                        Match Duration
+                    </span>
+
+                    <strong>
+                        2.5 minutes
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Scoring + Changeover
+                    </span>
+
+                    <strong>
+                        2.5 minutes
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Contingency
+                    </span>
+
+                    <strong>
+                        2 minutes
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Total Slot
+                    </span>
+
+                    <strong>
+                        7 minutes
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <hr>
+
+
+            <div class="info-grid">
+
+                <div>
+
+                    <span>
+                        Schedule Starts
+                    </span>
+
+                    <strong>
+                        {{ schedule.start_time }}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Schedule Ends
+                    </span>
+
+                    <strong>
+                        {{ schedule.end_time }}
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Minimum Break
+                    </span>
+
+                    <strong>
+
+                        {% if schedule.minimum_gap is not none %}
+
+                            {{ schedule.minimum_gap }}
+                            slots
+
+                        {% else %}
+
+                            —
+
+                        {% endif %}
+
+                    </strong>
+
+                </div>
+
+
+                <div>
+
+                    <span>
+                        Average Break
+                    </span>
+
+                    <strong>
+                        {{ schedule.average_gap }}
+                        slots
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <p class="note">
+
+                The scheduler attempts to distribute
+                each team's three runs as evenly as
+                possible while preventing teams from
+                running in consecutive slots.
+
+                Each slot includes a two-minute
+                contingency buffer for unexpected
+                delays.
+
+            </p>
+
+        </section>
+
+    </main>
+
+</body>
+
+</html>

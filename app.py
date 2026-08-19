@@ -1,30 +1,82 @@
-from flask import Flask, render_template, request, redirect, url_for
-import os, csv, io
+from flask import Flask, render_template, request
+from scheduler.csv_reader import read_teams
+from scheduler.schedule_generator import generate_schedule
 
 app = Flask(__name__)
 
-UPLOAD_FOLDER = "uploads"
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-
-
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def index():
-    return render_template("index.html")
+    error = None
 
-@app.route("/upload", methods=["POST"])
-def upload_file():
-    file = request.files.get("file")
+    if request.method == "POST":
+        file = request.files.get("file")
+        tables_raw = request.form.get("tables", "").strip()
+        start_time = request.form.get("start_time", "09:00")
 
-    if not file:
-        return "No file uploaded"
+        try:
+            tables = int(tables_raw)
 
-    text = file.read().decode("utf-8")
-    reader = csv.DictReader(io.StringIO(text))
-    for row in reader:
-        print(row)
-    return "CSV read successfully"
+            if tables < 1:
+                raise ValueError
+
+        except ValueError:
+            error = "Please enter a valid number of tables."
+
+            return render_template(
+                "index.html",
+                error=error
+            )
+
+        if not file or not file.filename:
+            error = "Please select a CSV file."
+
+            return render_template(
+                "index.html",
+                error=error
+            )
+
+        if not file.filename.lower().endswith(".csv"):
+            error = "Please upload a CSV file."
+
+            return render_template(
+                "index.html",
+                error=error
+            )
+
+        try:
+            teams = read_teams(file.stream)
+
+            if len(teams) == 0:
+                raise ValueError(
+                    "No teams were found in the CSV."
+                )
+
+            schedule = generate_schedule(
+                teams,
+                tables,
+                runs_per_team=3,
+                start_time=start_time
+            )
+
+            return render_template(
+                "schedule.html",
+                schedule=schedule,
+                teams=teams,
+                tables=tables
+            )
+
+        except ValueError as e:
+            error = str(e)
+
+        except Exception as e:
+            error = f"Error processing file: {e}"
+
+    return render_template(
+        "index.html",
+        error=error
+    )
+
 
 if __name__ == "__main__":
     app.run(debug=True)

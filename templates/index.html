@@ -1,14 +1,183 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
-    <title>Flask App</title>
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Robotics Schedule Generator</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
 </head>
+
 <body>
-    <form action="{{ url_for('upload_file') }}" method="POST" enctype="multipart/form-data">
-        <label for="file">Choose a file:</label>
-        <input type="file" id="file" name="file">
-    
-        <button type="submit">Upload</button>
-    </form>
+
+    <main class="container">
+
+        <section class="card hero">
+
+            <h1>
+                Robotics Schedule Generator
+            </h1>
+
+            <p>
+                Upload your team CSV and generate
+                a three-run schedule.
+            </p>
+
+        </section>
+
+
+        <section class="card">
+
+            {% if error %}
+
+                <div class="error">
+                    {{ error }}
+                </div>
+
+            {% endif %}
+
+
+            <form
+                method="POST"
+                enctype="multipart/form-data"
+            >
+
+                <div class="form-group">
+
+                    <label for="file">
+                        Team CSV
+                    </label>
+
+                    <input
+                        type="file"
+                        id="file"
+                        name="file"
+                        accept=".csv"
+                        required
+                    >
+
+                    <small>
+                        Upload a CSV containing your
+                        team numbers and team names.
+                    </small>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="tables">
+                        Number of Tables
+                    </label>
+
+                    <input
+                        type="number"
+                        id="tables"
+                        name="tables"
+                        min="1"
+                        value="3"
+                        required
+                    >
+
+                    <small>
+                        One team runs at each table
+                        during each time slot.
+                    </small>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label for="start_time">
+                        Starting Time
+                    </label>
+
+                    <input
+                        type="time"
+                        id="start_time"
+                        name="start_time"
+                        value="09:00"
+                        required
+                    >
+
+                    <small>
+                        The first runs will begin at
+                        this time.
+                    </small>
+
+                </div>
+
+
+                <button type="submit">
+                    Generate Schedule
+                </button>
+
+            </form>
+
+        </section>
+
+
+        <section class="card">
+
+            <h2>
+                Scheduling Information
+            </h2>
+
+            <p>
+                Each scheduling interval is
+                <strong>7 minutes</strong>:
+            </p>
+
+            <ul>
+
+                <li>
+                    2.5 minutes for the match
+                </li>
+
+                <li>
+                    2.5 minutes for scoring and
+                    changing teams
+                </li>
+
+                <li>
+                    2 minutes of contingency time
+                </li>
+
+            </ul>
+
+        </section>
+
+
+        <section class="card">
+
+            <h2>
+                CSV Format
+            </h2>
+
+            <p>
+                Your CSV should look like this:
+            </p>
+
+            <pre>Team Number,Team Name
+24963,Bin Chickens
+12345,Robot Warriors
+67890,RoboCats
+11111,Tech Titans</pre>
+
+        </section>
+
+    </main>
+
 </body>
+
 </html>
