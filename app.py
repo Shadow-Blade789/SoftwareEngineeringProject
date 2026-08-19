@@ -4,7 +4,6 @@ from scheduler.schedule_generator import generate_schedule
 
 app = Flask(__name__)
 
-
 @app.route("/", methods=["GET", "POST"])
 def index():
     error = None
@@ -16,55 +15,28 @@ def index():
 
         try:
             tables = int(tables_raw)
-
             if tables < 1:
                 raise ValueError
 
         except ValueError:
             error = "Please enter a valid number of tables."
-
-            return render_template(
-                "index.html",
-                error=error
-            )
+            return render_template("index.html", error=error)
 
         if not file or not file.filename:
             error = "Please select a CSV file."
-
-            return render_template(
-                "index.html",
-                error=error
-            )
+            return render_template("index.html", error=error)
 
         if not file.filename.lower().endswith(".csv"):
             error = "Please upload a CSV file."
-
-            return render_template(
-                "index.html",
-                error=error
-            )
+            return render_template("index.html", error=error)
 
         try:
             teams = read_teams(file.stream)
-
             if len(teams) == 0:
-                raise ValueError(
-                    "No teams were found in the CSV."
-                )
-
-            schedule = generate_schedule(
-                teams,
-                tables,
-                runs_per_team=3,
-                start_time=start_time
-            )
-
-            return render_template(
-                "schedule.html",
-                schedule=schedule,
-                teams=teams,
-                tables=tables
-            )
+                raise ValueError("No teams were found in the CSV.")
+ 
+            schedule = generate_schedule(teams, tables, runs_per_team=3, start_time=start_time)
+            return render_template("schedule.html", schedule=schedule, teams=teams, tables=tables)
 
         except ValueError as e:
             error = str(e)
@@ -76,7 +48,6 @@ def index():
         "index.html",
         error=error
     )
-
 
 if __name__ == "__main__":
     app.run(debug=True, host="127.0.0.1", port=8000)
