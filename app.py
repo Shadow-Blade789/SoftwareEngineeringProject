@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request
 from scheduler.csv_reader import read_teams
-from scheduler.schedule_generator import generate_schedule
+from scheduler.scheduler import generate_schedule
 
 app = Flask(__name__)
 
@@ -35,8 +35,8 @@ def index():
             if len(teams) == 0:
                 raise ValueError("No teams were found in the CSV.")
  
-            schedule = generate_schedule(teams, tables, runs_per_team=3, start_time=start_time)
-            return render_template("schedule.html", schedule=schedule, teams=teams, tables=tables)
+            schedule = generate_schedule(teams, tables, start_time=start_time)
+            return render_template("schedule.html", schedule=schedule)
 
         except ValueError as e:
             error = str(e)
