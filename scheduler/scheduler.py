@@ -6,8 +6,7 @@ from datetime import datetime, timedelta
 def generate_schedule(teams, tables, start_time):
     number_of_runs = len(teams) * RUNS_PER_TEAM
     minimum_slots = math.ceil(number_of_runs / tables)
-    number_of_slots = math.ceil(minimum_slots + len(teams) / tables)
-
+    number_of_slots = minimum_slots
     model = cp_model.CpModel() #creating the OR-Tools model
 
     run_slots = {} #to save each teams runs slots
@@ -18,10 +17,8 @@ def generate_schedule(teams, tables, start_time):
             slot = model.NewIntVar(0, number_of_slots - 1, f"team_{team_index}_run_{run}") #integer from slot 0 to final slot
             run_slots[team_index].append(slot) #save the run into the dictionary run slots
 
-
     for team_index in run_slots:    # Ensuring each slot only has 1 team
         model.AddAllDifferent(run_slots[team_index])
-
 
     for slot_index in range(number_of_slots):    # Making sure there's enough teams in each slot to fit on all tables
         slot_assignments = []

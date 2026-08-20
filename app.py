@@ -34,9 +34,22 @@ def index():
             teams = read_teams(file.stream)
             if len(teams) == 0:
                 raise ValueError("No teams were found in the CSV.")
- 
-            schedule = generate_schedule(teams, tables, start_time=start_time)
-            return render_template("schedule.html", schedule=schedule)
+
+            schedule = generate_schedule(teams, tables, start_time=start_time) # Generate schedule
+            table_numbers = sorted(set(match["table"] for match in schedule))
+            times = sorted(set(match["time"] for match in schedule))
+            schedule_grid = {}
+
+            for time in times:
+                schedule_grid[time] = {}
+
+                for table in table_numbers:
+                    schedule_grid[time][table] = None
+
+            for match in schedule:
+                schedule_grid[match["time"]][match["table"]] = match
+
+            return render_template("schedule.html", schedule=schedule, tables=table_numbers, times=times, schedule_grid=schedule_grid)
 
         except ValueError as e:
             error = str(e)
@@ -44,10 +57,7 @@ def index():
         except Exception as e:
             error = f"Error processing file: {e}"
 
-    return render_template(
-        "index.html",
-        error=error
-    )
+    return render_template("index.html", error=error)
 
 if __name__ == "__main__":
     app.run(debug=True, host="127.0.0.1", port=8000)

@@ -4,49 +4,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
-    <title>Schedule</title>
+
+    <title>Robotics Schedule</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {background-color: #f4f6f8;}
+
+        .schedule-container {max-width: 1400px; margin: auto;}
+
+        .schedule-title {font-weight: 700;}
+
+        .schedule-table {background: white; border-radius: 12px; overflow: hidden; box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);}
+
+        .schedule-table table {margin: 0;}
+
+        .schedule-table thead th {background-color: #212529; color: white; text-align: center; vertical-align: middle; padding: 14px; font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em;}
+
+        .schedule-table thead th.time-header {width: 110px;}
+
+        .time-cell {background-color: #f1f3f5; text-align: center; vertical-align: middle; font-size: 1.05rem; font-weight: 700; white-space: nowrap;}
+
+        .team-cell {height: 105px; text-align: center; vertical-align: middle; padding: 10px; transition: background-color 0.15s;}
+
+        .team-cell:hover {background-color: #eef3f8;}
+
+        .team-number {font-size: 1.25rem; font-weight: 700;}
+
+        .team-name {margin-top: 3px; font-size: 0.9rem; color: #555;}
+
+        .run {display: inline-block; margin-top: 6px; padding: 3px 9px; border-radius: 12px; background-color: #212529; color: white; font-size: 0.75rem; font-weight: 600;}
+
+        .empty-cell {background-color: #fafafa;}
+
+        @media (max-width: 768px) {
+            .schedule-table {overflow-x: auto;}
+            .schedule-table table {min-width: 700px;}
+            .team-cell {height: 95px;}
+        }
+    </style>
 </head>
 
 <body>
-<div class="container mt-4">
+<div class="container-fluid mt-4 mb-5 schedule-container">
     <div class="d-flex justify-content-between align-items-center mb-4">
-
-        <h1>Robotics Schedule</h1>
-
+        <div>
+            <h1 class="schedule-title mb-1">Robotics Schedule</h1>
+            <p class="text-muted mb-0">Competition Run Schedule</p>
+        </div>
         <a href="/" class="btn btn-secondary">New Schedule</a>
     </div>
 
-    <div class="table-responsive">
-        <table class="table table-striped table-bordered">
-            <thead class="table-dark">
-
+    <div class="table-responsive schedule-table">
+        <table class="table table-bordered">
+            <thead>
                 <tr>
-                    <th>Time</th>
-                    <th>Table</th>
-                    <th>Team Number</th>
-                    <th>Team Name</th>
-                    <th>Run</th>
+                    <th class="time-header">Time</th>
+
+                    {% for table in tables %}
+                    <th>Table {{ table }}</th>
+
+                    {% endfor %}
                 </tr>
             </thead>
 
             <tbody>
-                {% for match in schedule %}
-
+                {% for time in times %}
                 <tr>
-                    <td>{{ match.time }}</td>
-                    <td>{{ match.table }}</td>
-                    <td>{{ match.team_number }}</td>
-                    <td>{{ match.team_name }}</td>
-                    <td>Run {{ match.run }}</td>
-                </tr>
+                    <td class="time-cell">{{ time }}</td>
 
+                    {% for table in tables %}
+                        {% set match = schedule_grid[time][table] %}
+                        {% if match %}
+                        <td class="team-cell">
+                            <div class="team-number">{{ match.team_number }}</div>
+                            <div class="team-name">{{ match.team_name }}</div>
+                        </td>
+
+                        {% else %}
+                        <td class="team-cell empty-cell"></td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
                 {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
-
 </body>
 </html>
