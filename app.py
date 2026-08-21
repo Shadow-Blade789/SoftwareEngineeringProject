@@ -1,3 +1,6 @@
+#pip install ortools
+#Use this command to install the tool that is required
+
 from flask import Flask, render_template, request
 from scheduler.csv_reader import read_teams
 from scheduler.scheduler import generate_schedule
