@@ -34,7 +34,7 @@ def index():
             teams = read_teams(file.stream)
             if len(teams) == 0:
                 raise ValueError("No teams were found in the CSV.")
-
+#AI Code Begins
             schedule = generate_schedule(teams, tables, start_time=start_time) # Generate schedule
             table_numbers = sorted(set(match["table"] for match in schedule))
             times = sorted(set(match["time"] for match in schedule))
@@ -50,7 +50,7 @@ def index():
                 schedule_grid[match["time"]][match["table"]] = match
 
             return render_template("schedule.html", schedule=schedule, tables=table_numbers, times=times, schedule_grid=schedule_grid)
-
+#AI Code Ends
         except ValueError as e:
             error = str(e)
 

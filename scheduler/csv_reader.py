@@ -6,7 +6,7 @@ def read_teams(file):
 
     if not reader.fieldnames:
         raise ValueError("The CSV file is empty.")
-
+#AI Code begins
     required_columns = ["Team Number", "Team Name"]
     missing_columns = [
         column
@@ -16,7 +16,7 @@ def read_teams(file):
 
     if missing_columns:
         raise ValueError("Missing CSV columns: " + ", ".join(missing_columns))
-
+#AI Code ends
     for row_number, row in enumerate(reader, start=2):
         team_number = (row["Team Number"].strip())
         team_name = (row["Team Name"].strip())

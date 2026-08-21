@@ -10,7 +10,7 @@ def generate_schedule(teams, tables, start_time):
     model = cp_model.CpModel() #creating the OR-Tools model
 
     run_slots = {} #to save each teams runs slots
-
+#AI Code begins
     for team_index, team in enumerate(teams):    # Create variables to use to control the model
         run_slots[team_index] = []
         for run in range(RUNS_PER_TEAM):
@@ -39,7 +39,7 @@ def generate_schedule(teams, tables, start_time):
 
     if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):    # Check to see if it actually made a schedule
         raise ValueError("Unable to create a schedule.")
-
+#AI Code ends
     schedule = []    # Store the schedule in a usable format, instead of the OR-Tools format
 
     start = datetime.strptime(start_time, "%H:%M")
